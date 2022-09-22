@@ -7,8 +7,11 @@ use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[UniqueEntity('title')]
 class Property
 {
 
@@ -23,11 +26,18 @@ class Property
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 2,
+        max: 30,
+        minMessage: 'Your first name must be at least {{ limit }} characters long',
+        maxMessage: 'Your first name cannot be longer than {{ limit }} characters',
+    )]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Assert\Range(min:10, max:400)]
     #[ORM\Column]
     private ?int $surface = null;
 
@@ -53,6 +63,7 @@ class Property
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Regex('/^[0-9]{5}$/')]
     private ?string $postal_code = null;
 
     #[ORM\Column(options:["default" => false])]
